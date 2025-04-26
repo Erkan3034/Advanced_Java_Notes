@@ -8,7 +8,7 @@
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/deneme?useSSL=false&amp;serverTimezone=UTC</property>
         <property name="hibernate.connection.username">admin</property>
-        <property name="hibernate.connection.password">Erkan1205/*-+</property>
+        <property name="hibernate.connection.password">dbPassword</property>
         <property name="hibernate.connection.pool_size">1</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.show_sql">true</property>
