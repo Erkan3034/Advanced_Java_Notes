@@ -48,7 +48,7 @@ public class HibernateCityDal implements ICityDal {
      * @param city eklenecek şehir
      */
     @Override
-    @Transactional
+    @Transactional 
     public void add(City city) {
         Session session = entityManager.unwrap(Session.class);
         session.persist(city); // persist → yeni nesne veritabanına ekler
@@ -83,3 +83,12 @@ public class HibernateCityDal implements ICityDal {
         session.remove(cityToDelete); // remove → nesneyi siler
     }
 }
+
+
+/*
+ * @Repository → Bu anotasyon, Spring’e bu sınıfın bir DAO olduğunu belirtir. Böylece exception handling gibi bazı işlemleri otomatik yönetebilir.
+
+ * @Transactional → Her metotta işlemin tek parça (atomik) yapılmasını sağlar. Örneğin işlem yarıda kalırsa rollback yapar.
+
+*  unwrap(Session.class) → Hibernate'e özel işlemler yapmak için kullanılır. EntityManager JPA'nın genel standardı olsa da, Hibernate özelliklerini kullanmak için unwrap gerekir.
+ * */
