@@ -1,6 +1,6 @@
 package com.javaCourse.project.hibernateAndJPA.Entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "city")
@@ -16,7 +16,7 @@ public class City {
 	@Column(name = "Name")
 	private String name;
 	
-	@Column(name = "CountryCode")
+	@Column(name = "Countrycode")
 	private String countryCode;
 	
 	@Column(name = "District")
@@ -35,6 +35,7 @@ public class City {
 		this.population = population;
 	}
 	
+	public City() {}
 	
 	public int getId() {
 		return Id;

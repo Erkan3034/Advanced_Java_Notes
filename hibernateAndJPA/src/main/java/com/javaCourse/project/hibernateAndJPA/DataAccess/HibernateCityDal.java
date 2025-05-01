@@ -2,7 +2,9 @@ package com.javaCourse.project.hibernateAndJPA.DataAccess;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 
 import com.javaCourse.project.hibernateAndJPA.Entities.City;
 
@@ -16,15 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
  * veritabanı işlemlerini (CRUD) gerçekleştiren sınıftır.
  * Bu sınıf DAO (Data Access Object) katmanında yer alır.
  */
-
-@Repository // Spring’e bu sınıfın bir repository (veri erişim bileşeni) olduğunu belirtir
+@Repository // Spring'e bu sınıfın bir repository (veri erişim bileşeni) olduğunu belirtir
 public class HibernateCityDal implements ICityDal {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     /**
      * EntityManager, JPA ile veritabanı işlemlerini yapmamızı sağlayan ana bileşendir.
-     * Spring, @Autowired ile bunu otomatik olarak inject ede
+     * Spring, @Autowired ile bunu otomatik olarak inject eder
      */
     @Autowired
     public HibernateCityDal(EntityManager entityManager) {
@@ -35,7 +36,6 @@ public class HibernateCityDal implements ICityDal {
      * Tüm şehir kayıtlarını getirir.
      * @return List<City> şehir listesi
      */
-    
     @Override
     @Transactional // Veritabanı işlemi olduğu için transaction kapsamında yapılmalı
     public List<City> getAll() {
@@ -48,15 +48,12 @@ public class HibernateCityDal implements ICityDal {
      * @param city eklenecek şehir
      */
     @Override
-    @Transactional 
+    @Transactional
     public void add(City city) {
         Session session = entityManager.unwrap(Session.class);
         session.persist(city); // persist → yeni nesne veritabanına ekler
     }
 
-    
-    
-    
     /**
      * Var olan şehir kaydını günceller.
      * @param city güncellenecek şehir nesnesi
@@ -68,8 +65,6 @@ public class HibernateCityDal implements ICityDal {
         session.merge(city); // merge → var olan veriyi günceller
     }
 
-    
-    
     /**
      * Belirtilen şehir kaydını veritabanından siler.
      * @param city silinecek şehir nesnesi
@@ -82,13 +77,18 @@ public class HibernateCityDal implements ICityDal {
         City cityToDelete = session.get(City.class, city.getId());
         session.remove(cityToDelete); // remove → nesneyi siler
     }
+
+    
+    
+    @Override
+    @Transactional
+    public City getById(int id) {
+        Session session = entityManager.unwrap(Session.class);
+        City city = session.get(City.class, id); // Burada sadece id kullanılmalı
+        if (city == null) {
+            throw new EntityNotFoundException("Şehir bulunamadı: id = " + id);
+        }
+        return city;
+    }
+
 }
-
-
-/*
- * @Repository → Bu anotasyon, Spring’e bu sınıfın bir DAO olduğunu belirtir. Böylece exception handling gibi bazı işlemleri otomatik yönetebilir.
-
- * @Transactional → Her metotta işlemin tek parça (atomik) yapılmasını sağlar. Örneğin işlem yarıda kalırsa rollback yapar.
-
-*  unwrap(Session.class) → Hibernate'e özel işlemler yapmak için kullanılır. EntityManager JPA'nın genel standardı olsa da, Hibernate özelliklerini kullanmak için unwrap gerekir.
- * */
